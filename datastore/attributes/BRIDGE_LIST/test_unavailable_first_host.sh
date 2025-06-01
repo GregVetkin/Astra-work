@@ -26,24 +26,24 @@ esac
 
 
 
-FILE_PATH=$(mktemp -p /var/tmp)
-dd if=/dev/urandom of=${FILE_PATH} bs=1MiB count=10 status=none && chmod 777 ${FILE_PATH}
+DUMMY_FILE=$(mktemp -p /var/tmp)
+dd if=/dev/urandom of=${DUMMY_FILE} bs=1MiB count=10 status=none && chmod 777 ${DUMMY_FILE}
 
 
-IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d ${DATASTORE_ID} --type ${IMAGE_TYPE} --path ${FILE_PATH} | awk '{print $NF}')
+IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --type $IMAGE_TYPE --path $DUMMY_FILE | awk '{print $NF}')
 
-while [[ $(oneimage show ${IMAGE_ID} -x | xmlstarlet sel -t -v "//STATE") -eq 4 ]]; do sleep 1; done
+while [[ $(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "//STATE") -eq 4 ]]; do sleep 1; done
 
-IMAGE_STATE_CODE=$(oneimage show ${IMAGE_ID} -x | xmlstarlet sel -t -v "//STATE")
-
-
-
-oneimage delete ${IMAGE_ID}
-rm -f ${FILE_PATH}
+IMAGE_STATE_CODE=$(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "//STATE")
 
 
 
-if [[ ${IMAGE_STATE_CODE} -eq 1 ]]; then
+oneimage delete $IMAGE_ID
+rm -f $DUMMY_FILE
+
+
+
+if [[ $IMAGE_STATE_CODE -eq 1 ]]; then
     echo "PASSED"
     exit 0
 else

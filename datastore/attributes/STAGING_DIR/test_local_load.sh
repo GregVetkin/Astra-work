@@ -25,28 +25,28 @@ esac
 
 
 STAGE_DIRECTORY="/testdir"
-TEST_FILE_PATH=$(mktemp)
-IMAGE_PATH=$(mktemp -p /var/tmp)
-dd if=/dev/urandom of=${IMAGE_PATH} bs=1MiB count=2048 status=none && chmod 777 ${IMAGE_PATH}
+CONTROL_FILE=$(mktemp)
+DUMMY_FILE=$(mktemp -p /var/tmp)
+dd if=/dev/urandom of=${DUMMY_FILE} bs=1MiB count=2048 status=none && chmod 777 ${DUMMY_FILE}
 
-mkdir -m 777 ${STAGE_DIRECTORY}
+mkdir -m 777 $STAGE_DIRECTORY
 
 
-IMAGE_ID=$(oneimage create -d $DATASTORE_ID --name "test_$(date +%s%N)" --path $IMAGE_PATH --type "$IMAGE_TYPE" | awk '{print $NF}')
+IMAGE_ID=$(oneimage create -d $DATASTORE_ID --name "test_$(date +%s%N)" --path $DUMMY_FILE --type $IMAGE_TYPE | awk '{print $NF}')
 
 
 while [[ $(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "//STATE") -ne 1 ]]
 do 
-    ls $STAGE_DIRECTORY >> $TEST_FILE_PATH
+    ls $STAGE_DIRECTORY >> $CONTROL_FILE
     sleep 1 
 done
 
 
 oneimage delete $IMAGE_ID
 rm -fr $STAGE_DIRECTORY
+rm -f  $DUMMY_FILE
 
-
-if [ -s $TEST_FILE_PATH ] then 
+if [ -s $CONTROL_FILE ] then 
     echo "PASSED"
     exit 0
 else

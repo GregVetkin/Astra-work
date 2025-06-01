@@ -29,8 +29,8 @@ esac
 
 
 
-FILE_PATH=$(mktemp -p /var/tmp)
-dd if=/dev/urandom of=${FILE_PATH} bs=1MiB count=10 status=none && chmod 777 ${FILE_PATH}
+DUMMY_FILE=$(mktemp -p /var/tmp)
+dd if=/dev/urandom of=${DUMMY_FILE} bs=1MiB count=10 status=none && chmod 777 ${DUMMY_FILE}
 
 
 HOST_TO_DSBL="bun2.brest.local"
@@ -51,9 +51,9 @@ while [[ $(onehost show ${HOST_TO_ERR}  -x | xmlstarlet sel -t -v "//STATE") -ne
 
 
 
-IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d ${DATASTORE_ID} --type ${IMAGE_TYPE} --path ${FILE_PATH} | awk '{print $NF}')
+IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --type $IMAGE_TYPE --path $DUMMY_FILE | awk '{print $NF}')
 sleep 5
-IMAGE_STATE_CODE=$(oneimage show ${IMAGE_ID} -x | xmlstarlet sel -t -v "/IMAGE/STATE")
+IMAGE_STATE_CODE=$(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "/IMAGE/STATE")
 
 
 
@@ -61,11 +61,11 @@ onehost  enable ${HOST_TO_DSBL}
 onehost  enable ${HOST_TO_OFF}
 oneimage delete ${IMAGE_ID}
 sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@$BUN4 "sudo chmod 755 /var/tmp/one"
-rm -f ${FILE_PATH}
+rm -f $DUMMY_FILE
 
 
 
-if [[ ${IMAGE_STATE_CODE} -eq 5 ]]; then
+if [[ $IMAGE_STATE_CODE -eq 5 ]]; then
     echo "PASSED"
     exit 0
 else

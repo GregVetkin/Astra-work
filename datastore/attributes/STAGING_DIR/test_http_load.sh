@@ -23,27 +23,27 @@ esac
 
 
 IMAGE_URL="http://buarm/mini.qcow2"
-STAGE_DIRECTORY="testdir_$(date +%s%N)"
-TEST_FILE_PATH=$(mktemp)
+STAGE_DIRECTORY="/testdir"
+CONTROL_FILE=$(mktemp)
 
 
-mkdir -m 777 ${STAGE_DIRECTORY}
+mkdir -m 777 $STAGE_DIRECTORY
 
-IMAGE_ID=$(oneimage create -d ${DATASTORE_ID} --name "test_$(date +%s%N)" --path ${IMAGE_URL} --type "${IMAGE_TYPE}" | awk '{print $NF}')
+IMAGE_ID=$(oneimage create -d $DATASTORE_ID --name "test_$(date +%s%N)" --path $IMAGE_URL --type $IMAGE_TYPE | awk '{print $NF}')
 
 
-while [[ $(oneimage show ${IMAGE_ID} -x | xmlstarlet sel -t -v "//STATE") -ne 1 ]]
+while [[ $(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "//STATE") -ne 1 ]]
 do 
-    ls ${STAGE_DIRECTORY} >> ${TEST_FILE_PATH}
-    sleep 1 
+    ls $STAGE_DIRECTORY >> $CONTROL_FILE
+    sleep 1
 done
 
 
-oneimage delete ${IMAGE_ID}
+oneimage delete $IMAGE_ID
 rm -fr $STAGE_DIRECTORY
 
 
-if [ -s $TEST_FILE_PATH ] then 
+if [ -s $CONTROL_FILE ] then 
     echo "PASSED"
     exit 0
 else
