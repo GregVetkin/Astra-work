@@ -1,0 +1,52 @@
+#!/bin/bash
+# Проверка при загрузке через http
+# Атрибуты: BRIDGE_LIST="bufn1.brest.local" STAGING_DIR="/testdir"
+
+DATASTORE_TYPE=$1
+
+
+case ${DATASTORE_TYPE} in
+    IMAGE)
+        IMAGE_TYPE="OS"
+        DATASTORE_ID=$(onedatastore list -x | xmlstarlet sel -t -v "//DATASTORE[starts-with(NAME, 'image_')]/ID")
+        ;;
+    FILE)
+        IMAGE_TYPE="CONTEXT"
+        DATASTORE_ID=$(onedatastore list -x | xmlstarlet sel -t -v "//DATASTORE[starts-with(NAME, 'file_')]/ID")
+        ;;
+    *)
+        echo "Данный тип [${DATASTORE_TYPE}] не поддерживается тестом"
+        exit 2
+        ;;
+esac
+
+
+
+IMAGE_URL="http://buarm/mini.qcow2"
+STAGE_DIRECTORY="testdir_$(date +%s%N)"
+TEST_FILE_PATH=$(mktemp)
+
+
+mkdir -m 777 ${STAGE_DIRECTORY}
+
+IMAGE_ID=$(oneimage create -d ${DATASTORE_ID} --name "test_$(date +%s%N)" --path ${IMAGE_URL} --type "${IMAGE_TYPE}" | awk '{print $NF}')
+
+
+while [[ $(oneimage show ${IMAGE_ID} -x | xmlstarlet sel -t -v "//STATE") -ne 1 ]]
+do 
+    ls ${STAGE_DIRECTORY} >> ${TEST_FILE_PATH}
+    sleep 1 
+done
+
+
+oneimage delete ${IMAGE_ID}
+rm -fr $STAGE_DIRECTORY
+
+
+if [ -s $TEST_FILE_PATH ] then 
+    echo "PASSED"
+    exit 0
+else
+    echo "FAILED"
+    exit 1
+fi
