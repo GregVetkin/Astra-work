@@ -3,9 +3,9 @@
 # Атрибуты: BRIDGE_LIST="bufn1.brest.local" STAGING_DIR="/testdir"
 
 DATASTORE_TYPE=$1
-LOCAL_ADMIN_NAME="u"
-LOCAL_ADMIN_PASS="1"
-BUARM="buarm"
+# LOCAL_ADMIN_NAME="u"
+# LOCAL_ADMIN_PASS="1"
+# BUARM="buarm"
 
 
 
@@ -25,11 +25,11 @@ case ${DATASTORE_TYPE} in
 esac
 
 
-sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@$BUARM "/media/sf_git/skts-test/testlink/brest/apache_with_image.sh > /dev/null"
+# sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@$BUARM "cd /media/sf_git/skts-test/testlink/brest/ && ./apache_with_image.sh > /dev/null"
 
 
-IMAGE_URL="http://buarm/mini.qcow2"
-STAGE_DIRECTORY="/testdir"
+IMAGE_URL="https://dl.astralinux.ru/brest/testing/iso/brest-3.3-for-astra-1.7.4-RC2.iso"
+STAGE_DIRECTORY="/tmp/testdir"
 CONTROL_FILE=$(mktemp)
 
 
