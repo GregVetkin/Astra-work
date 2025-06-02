@@ -36,21 +36,20 @@ function test_system_datastore() {
 
     onedatastore enable $SYSTEM_DATASTORE_ID
     sleep 2
-
     VM_ID=$(onevm create --name "test_$(date +%s%N)" --memory 32 --cpu 1 --disk $IMAGE_ID | awk '{print $NF}')
     sleep 10
     SCHED_MESSAGE=$(onevm show $VM_ID -x | xmlstarlet sel -t -v "/VM/USER_TEMPLATE/SCHED_MESSAGE")
     VM_STATE=$(onevm show $VM_ID -x | xmlstarlet sel -t -v "/VM/STATE")
 
-
     for SYS_DS_ID in "${SYSTEM_DATASTORE_IDS[@]}"; do
         onedatastore enable $SYS_DS_ID
     done
 
-    onevm    delete $VM_ID
+    onevm terminate --hard $VM_ID
+    while [[ $(onevm show $VM_ID -x | xmlstarlet sel -t -v "/VM/STATE") -ne 6 ]]; do sleep 1; done
     oneimage delete $IMAGE_ID
 
-    if [ "$VM_STATE" -ne 8 ] && [ -z "$SCHED_MESSAGE" ]; then
+    if [ "$VM_STATE" -eq 1 ] && [ -z "$SCHED_MESSAGE" ]; then
         echo "PASSED"
         exit 0
     else
@@ -75,6 +74,7 @@ case ${DATASTORE_TYPE} in
         test_image_and_file_datastore
         ;;
     SYSTEM)
+        test_system_datastore
         ;;
     *)
         echo "Данный тип [${DATASTORE_TYPE}] не поддерживается тестом"
