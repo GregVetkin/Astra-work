@@ -21,9 +21,10 @@ case ${DATASTORE_TYPE} in
         ;;
 esac
 
-
+DATASTORE_TOTAL_MB=$(onedatastore show $DATASTORE_ID -x | xmlstarlet sel -t -v "//TOTAL_MB")
+FILE_SIZE=$((DATASTORE_TOTAL_MB + 512))
 DUMMY_FILE=$(mktemp -p /var/tmp)
-dd if=/dev/zero of=${DUMMY_FILE} bs=1 count=0 seek=1T status=none && chmod 777 ${DUMMY_FILE}
+dd if=/dev/zero of=${DUMMY_FILE} bs=1 count=0 seek=${FILE_SIZE}M status=none && chmod 777 ${DUMMY_FILE}
 
 
 IMAGE_NAME="test_$(date +%s%N)"
