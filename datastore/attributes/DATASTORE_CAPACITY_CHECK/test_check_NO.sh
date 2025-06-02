@@ -27,7 +27,7 @@ dd if=/dev/zero of=${DUMMY_FILE} bs=1 count=0 seek=1T status=none && chmod 777 $
 
 
 IMAGE_NAME="test_$(date +%s%N)"
-RESULT_CODE=$(oneimage create --name $IMAGE_NAME -d $DATASTORE_ID --path $DUMMY_FILE --type $IMAGE_TYPE; echo $?)
+RESULT_CODE=$(oneimage create --name $IMAGE_NAME -d $DATASTORE_ID --path $DUMMY_FILE --type $IMAGE_TYPE &>/dev/null; echo $?)
 sleep 1
 IMAGE_ID=$(oneimage list -x | xmlstarlet sel -t -v "//IMAGE[NAME='$IMAGE_NAME']/ID")
 oneimage delete $IMAGE_ID

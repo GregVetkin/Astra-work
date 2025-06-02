@@ -26,7 +26,7 @@ esac
 DUMMY_FILE=$(mktemp -p /var/tmp)
 dd if=/dev/zero of=${DUMMY_FILE} bs=1 count=0 seek=1T status=none && chmod 777 ${DUMMY_FILE}
 
-RESULT_CODE=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --path $DUMMY_FILE --type $IMAGE_TYPE; echo $?)
+RESULT_CODE=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --path $DUMMY_FILE --type $IMAGE_TYPE &>/dev/null; echo $?)
 sleep 1
 
 rm -f $DUMMY_FILE
