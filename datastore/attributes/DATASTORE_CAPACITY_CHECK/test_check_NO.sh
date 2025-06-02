@@ -13,7 +13,7 @@ case ${DATASTORE_TYPE} in
     # FILE)
     #     IMAGE_TYPE="CONTEXT"
     #     DATASTORE_ID=$(onedatastore list -x | xmlstarlet sel -t -v "//DATASTORE[starts-with(NAME, 'file_')]/ID")
-        ;;
+    #   ;;
     *)
         echo "Данный тип [${DATASTORE_TYPE}] не поддерживается тестом"
         echo "Доступные типы: IMAGE"
