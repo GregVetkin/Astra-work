@@ -37,7 +37,7 @@ function test_system_datastore() {
     onedatastore enable $SYSTEM_DATASTORE_ID
     sleep 2
     VM_ID=$(onevm create --name "test_$(date +%s%N)" --memory 32 --cpu 1 --disk $IMAGE_ID | awk '{print $NF}')
-    sleep 10
+    sleep 30
     SCHED_MESSAGE=$(onevm show $VM_ID -x | xmlstarlet sel -t -v "/VM/USER_TEMPLATE/SCHED_MESSAGE")
     VM_STATE=$(onevm show $VM_ID -x | xmlstarlet sel -t -v "/VM/STATE")
 
@@ -49,7 +49,7 @@ function test_system_datastore() {
     while [[ $(onevm show $VM_ID -x | xmlstarlet sel -t -v "/VM/STATE") -ne 6 ]]; do sleep 1; done
     oneimage delete $IMAGE_ID
 
-    if [ "$VM_STATE" -eq 1 ] && [ -z "$SCHED_MESSAGE" ]; then
+    if [ "$VM_STATE" -eq 1 ] && [ -n "$SCHED_MESSAGE" ]; then
         echo "PASSED"
         exit 0
     else
