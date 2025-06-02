@@ -1,6 +1,6 @@
 #!/bin/bash
 # Проверка при загрузке локально
-# Атрибуты: BRIDGE_LIST="bufn1.brest.local" STAGING_DIR="/testdir" SAFE_DIRS="/var/tmp"
+# Атрибуты: BRIDGE_LIST="bufn1.brest.local" STAGING_DIR="/tmp/testdir" SAFE_DIRS="/var/tmp"
 
 DATASTORE_TYPE=$1
 
@@ -24,7 +24,7 @@ esac
 
 
 
-STAGE_DIRECTORY="/testdir"
+STAGE_DIRECTORY="/tmp/testdir"
 CONTROL_FILE=$(mktemp)
 DUMMY_FILE=$(mktemp -p /var/tmp)
 dd if=/dev/urandom of=${DUMMY_FILE} bs=1MiB count=2048 status=none && chmod 777 ${DUMMY_FILE}

@@ -1,11 +1,11 @@
 #!/bin/bash
 # Проверка при загрузке через http
-# Атрибуты: BRIDGE_LIST="bufn1.brest.local" STAGING_DIR="/testdir"
+# Атрибуты: BRIDGE_LIST="bufn1.brest.local" STAGING_DIR="/tmp/testdir"
 
 DATASTORE_TYPE=$1
-# LOCAL_ADMIN_NAME="u"
-# LOCAL_ADMIN_PASS="1"
-# BUARM="buarm"
+LOCAL_ADMIN_NAME="u"
+LOCAL_ADMIN_PASS="1"
+
 
 
 
@@ -25,10 +25,10 @@ case ${DATASTORE_TYPE} in
 esac
 
 
-# sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@$BUARM "cd /media/sf_git/skts-test/testlink/brest/ && ./apache_with_image.sh > /dev/null"
+sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@buarm "cd /media/sf_git/skts-test/testlink/brest/ && ./apache_with_image.sh" > /dev/nul
 
 
-IMAGE_URL="https://dl.astralinux.ru/brest/testing/iso/brest-3.3-for-astra-1.7.4-RC2.iso"
+IMAGE_URL="http://buarm/mini.qcow2"
 STAGE_DIRECTORY="/tmp/testdir"
 CONTROL_FILE=$(mktemp)
 
@@ -47,7 +47,7 @@ done
 
 oneimage delete $IMAGE_ID
 rm -fr $STAGE_DIRECTORY
-sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@$BUARM "sudo apt purge apache2 -y > /dev/null"
+sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@buarm "sudo apt purge apache2 -y" > /dev/null
 
 if [ -s $CONTROL_FILE ] then 
     echo "PASSED"
