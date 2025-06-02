@@ -26,7 +26,7 @@ DUMMY_FILE=$(mktemp -p /var/tmp)
 dd if=/dev/urandom of=${DUMMY_FILE} bs=1MiB count=10 status=none && chmod 777 ${DUMMY_FILE}
 
 
-IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE --path $DUMMY_FILE --type $IMAGE_TYPE | awk '{print $NF}')
+IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --path $DUMMY_FILE --type $IMAGE_TYPE | awk '{print $NF}')
 sleep 5
 IMAGE_STATE_CODE=$(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "/IMAGE/STATE")
 
