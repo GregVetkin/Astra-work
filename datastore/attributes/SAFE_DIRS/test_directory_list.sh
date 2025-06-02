@@ -31,6 +31,7 @@ IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --path $
 sleep 5
 IMAGE_STATE_CODE=$(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "/IMAGE/STATE")
 
+oneimage delete $IMAGE_ID
 rm -rf $SAFE_DIRECTORY
 
 
