@@ -1,9 +1,8 @@
 #!/bin/bash
-#  Тест на корректную регистрацию образа при совпадении RESTRICTED_DIRS и SAFE_DIRS
-#  Необходимые атрибуты SAFE_DIRS="/var/tmp", RESTRICTED_DIRS="/var/tmp"
+#  Тест на проверку работы аттрибута ограничения емкости хранилища
+#  Атрибуты: DATASTORE_CAPACITY_CHECK="NO"
 
 DATASTORE_TYPE=$1
-
 
 
 case ${DATASTORE_TYPE} in
@@ -23,19 +22,17 @@ case ${DATASTORE_TYPE} in
 esac
 
 
+
 DUMMY_FILE=$(mktemp -p /var/tmp)
-dd if=/dev/urandom of=${DUMMY_FILE} bs=1MiB count=10 status=none && chmod 777 ${DUMMY_FILE}
+dd if=/dev/zero of=${DUMMY_FILE} bs=1 count=0 seek=1T status=none && chmod 777 ${DUMMY_FILE}
 
+RESULT_CODE=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --path $DUMMY_FILE --type $IMAGE_TYPE; echo $?)
+sleep 1
 
-IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d $DATASTORE_ID --path $DUMMY_FILE --type $IMAGE_TYPE | awk '{print $NF}')
-sleep 5
-IMAGE_STATE_CODE=$(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "/IMAGE/STATE")
-
-oneimage delete $IMAGE_ID
 rm -f $DUMMY_FILE
 
 
-if [[ $IMAGE_STATE_CODE -eq 1 ]]; then
+if [[ $RESULT_CODE -ne 0 ]]; then
     echo "PASSED"
     exit 0
 else

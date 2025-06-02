@@ -16,6 +16,7 @@ case ${DATASTORE_TYPE} in
         ;;
     *)
         echo "Данный тип [${DATASTORE_TYPE}] не поддерживается тестом"
+        echo "Доступные типы: IMAGE FILE"
         exit 2
         ;;
 esac
