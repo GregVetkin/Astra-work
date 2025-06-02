@@ -3,6 +3,10 @@
 # Атрибуты: BRIDGE_LIST="bufn1.brest.local" STAGING_DIR="/testdir"
 
 DATASTORE_TYPE=$1
+LOCAL_ADMIN_NAME="u"
+LOCAL_ADMIN_PASS="1"
+BUARM="buarm"
+
 
 
 case ${DATASTORE_TYPE} in
@@ -20,6 +24,8 @@ case ${DATASTORE_TYPE} in
         ;;
 esac
 
+
+sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@$BUARM "/media/sf_git/skts-test/testlink/brest/apache_with_image.sh > /dev/null"
 
 
 IMAGE_URL="http://buarm/mini.qcow2"
@@ -41,7 +47,7 @@ done
 
 oneimage delete $IMAGE_ID
 rm -fr $STAGE_DIRECTORY
-
+sshpass -p ${LOCAL_ADMIN_PASS} ssh $LOCAL_ADMIN_NAME@$BUARM "sudo apt purge apache2 -y > /dev/null"
 
 if [ -s $CONTROL_FILE ] then 
     echo "PASSED"
