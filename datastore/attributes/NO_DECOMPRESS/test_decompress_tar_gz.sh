@@ -62,7 +62,7 @@ onevm resume $VM_ID
 
 sleep 60
 
-if ping -c 10 "10.0.70.250"; then
+if ping -c 10 "10.0.70.250" &>/dev/null; then
     ALIVE=true
 else
     ALIVE=false
