@@ -21,7 +21,9 @@ esac
 echo 'Qwe\!2345' | kinit >/dev/null
 
 wget -P /var/tmp/ ftp://10.190.14.11/guest/mini/latest/archive.tar.gz &>/dev/null
-IMAGE_TAR_GZ="/var/tmp/archive.tar.gz"
+tar -xzf /var/tmp/archive.tar.gz -C /var/tmp
+IMAGE_TAR_GZ="/var/tmp/mini.qcow2"
+# IMAGE_TAR_GZ="/var/tmp/archive.tar.gz"
 
 IMAGE_ID=$(oneimage create -d $DATASTORE_ID --name "test_$(date +%s%N)" --path $IMAGE_TAR_GZ --type $IMAGE_TYPE | awk '{print $NF}')
 while [[ $(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "//STATE") -eq 4 ]]; do sleep 1; done
@@ -56,7 +58,7 @@ rm -f $VNET_TEMPLATE
 
 VM_ID=$(onevm create --name "test_$(date +%s%N)" --nic $VNET_ID --cpu 1 --memory 1024 --disk $IMAGE_ID --spice --context NETWORK="YES" | awk '{print $NF}')
 
-while [[ $(onevm show $VM_ID -x | xmlstarlet sel -t -v "//STATE") -eq 8 ]]; do sleep 1; done
+while [[ $(onevm show $VM_ID -x | xmlstarlet sel -t -v "//STATE") -ne 8 ]]; do sleep 1; done
 
 onevm resume $VM_ID
 
@@ -71,6 +73,7 @@ fi
 
 onevm terminate --hard $VM_ID
 while [[ $(onevm show $VM_ID -x | xmlstarlet sel -t -v "//STATE") -eq 6 ]]; do sleep 1; done
+sleep 2
 oneimage delete $IMAGE_ID
 onevnet  delete $VNET_ID
 rm -f /var/tmp/archive.tar.gz
