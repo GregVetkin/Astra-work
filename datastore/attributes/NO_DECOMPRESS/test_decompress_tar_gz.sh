@@ -2,6 +2,10 @@
 #  Тест проверки корректной распаковки образа .tar.gz
 #  Необходимые атрибуты NO_DECOMPRESS="NO"
 
+THIS_FILE_DIR=$(dirname "$(readlink -f "$0")")
+
+source "$THIS_FILE_DIR/../../../libbrest.sh"
+
 DATASTORE_TYPE=$1
 
 case ${DATASTORE_TYPE} in
@@ -20,7 +24,7 @@ esac
 
 echo 'Qwe!2345' | kinit &>/dev/null
 
-wget -P /var/tmp/ ftp://10.190.14.11/guest/mini/latest/archive.tar.gz &>/dev/null
+wget -P /var/tmp/ ftp://$bqs_server/guest/mini/latest/archive.tar.gz &>/dev/null
 IMAGE_TAR_GZ="/var/tmp/archive.tar.gz"
 
 IMAGE_ID=$(oneimage create -d $DATASTORE_ID --name "test_$(date +%s%N)" --path $IMAGE_TAR_GZ --type $IMAGE_TYPE | awk '{print $NF}')
