@@ -1,5 +1,5 @@
-# Тест атрибута без суффиксов
-# Атрибуты: LIMIT_TRANSFER_BW="31457280"
+# Тест атрибута с суффиксом М
+# Атрибуты: LIMIT_TRANSFER_BW="25M"
 
 function run_by_ssh() {
     local COMMAND="${1}"
@@ -35,17 +35,17 @@ run_by_ssh "cd /media/sf_git/skts-test/testlink/brest/ && ./apache_with_image.sh
 IMAGE_ID=$(oneimage create -d $DATASTORE_ID --name "test_$(date +%s%N)" --path $IMAGE_URL --type $IMAGE_TYPE | awk '{print $NF}')
 
 
-run_by_ssh "cd ~/brest && timeout 10 ./transmit_speed.sh >> ~/testfile"
+run_by_ssh "cd /media/sf_git/skts-test/testlink/brest/ && timeout 10 ./transmit_speed.sh >> ~/testfile"
 AVG_UPLOAD=$(run_by_ssh "cat -e ~/testfile | grep MB/s | grep -o '[0-9]*\.[0-9]*' | awk '{ sum += \$1; count ++ } END { if (count > 0) print int(sum / count) }'")
 
 
 oneimage delete $IMAGE_ID
 
-run_by_ssh "sudo apt purge apache2 -y &> /dev/null; sudo rm -f ~/testfile"
+run_by_ssh "sudo apt purge apache2 -y &> /dev/null" #; sudo rm -f ~/testfile"
 
 
 
-if [[ ${AVG_UPLOAD} -gt 27 ]] && [[ ${AVG_UPLOAD} -lt 33 ]]; then 
+if [[ ${AVG_UPLOAD} -gt 23 ]] && [[ ${AVG_UPLOAD} -lt 27 ]]; then 
     echo "PASSED"
     exit 0
 else
