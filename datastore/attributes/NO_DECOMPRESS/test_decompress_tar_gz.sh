@@ -18,12 +18,10 @@ esac
 
 
 
-echo 'Qwe\!2345' | kinit >/dev/null
+echo 'Qwe!2345' | kinit &>/dev/null
 
 wget -P /var/tmp/ ftp://10.190.14.11/guest/mini/latest/archive.tar.gz &>/dev/null
-tar -xzf /var/tmp/archive.tar.gz -C /var/tmp
-IMAGE_TAR_GZ="/var/tmp/mini.qcow2"
-# IMAGE_TAR_GZ="/var/tmp/archive.tar.gz"
+IMAGE_TAR_GZ="/var/tmp/archive.tar.gz"
 
 IMAGE_ID=$(oneimage create -d $DATASTORE_ID --name "test_$(date +%s%N)" --path $IMAGE_TAR_GZ --type $IMAGE_TYPE | awk '{print $NF}')
 while [[ $(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "//STATE") -eq 4 ]]; do sleep 1; done
