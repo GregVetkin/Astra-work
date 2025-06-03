@@ -6,11 +6,11 @@ DATASTORE_TYPE=$1
 case ${DATASTORE_TYPE} in
     IMAGE)
         IMAGE_TYPE="OS"
-        DATASTORE_ID=$(onedatastore list -x | xmlstarlet sel -t -v "//DATASTORE[starts-with(NAME, 'image_')]/ID")
+        IMAGE_DATASTORE_ID=$(onedatastore list -x | xmlstarlet sel -t -v "//DATASTORE[starts-with(NAME, 'image_')]/ID")
         ;;
     *)
         echo "Данный тип [${DATASTORE_TYPE}] не поддерживается тестом"
-        echo "Доступные типы: IMAGE"
+        echo "Доступный тип: IMAGE"
         exit 2
         ;;
 esac
@@ -19,7 +19,7 @@ esac
 
 
 
-IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d ${DATASTORE_ID} --type $IMAGE_TYPE --size 10 | awk '{print $NF}')
+IMAGE_ID=$(oneimage create --name "test_$(date +%s%N)" -d ${IMAGE_DATASTORE_ID} --type $IMAGE_TYPE --size 10 | awk '{print $NF}')
 while [[ $(oneimage show $IMAGE_ID -x | xmlstarlet sel -t -v "//STATE") -ne 1 ]]; do sleep 1; done
 VM_ID=$(onevm create --name "test_$(date +%s%N)" --memory 128 --cpu 1 --disk $IMAGE_ID | awk '{print $NF}')
 
