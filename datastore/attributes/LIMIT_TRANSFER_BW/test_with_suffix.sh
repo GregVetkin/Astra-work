@@ -41,7 +41,7 @@ AVG_UPLOAD=$(run_by_ssh "cat -e ~/testfile | grep MB/s | grep -o '[0-9]*\.[0-9]*
 
 oneimage delete $IMAGE_ID
 
-run_by_ssh "sudo apt purge apache2 -y &> /dev/null" #; sudo rm -f ~/testfile"
+run_by_ssh "sudo apt purge apache2 -y &> /dev/null; sudo rm -f ~/testfile"
 
 
 
